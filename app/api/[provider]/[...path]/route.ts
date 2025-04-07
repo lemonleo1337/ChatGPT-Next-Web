@@ -22,6 +22,24 @@ async function handle(
 ) {
   const apiPath = `/api/${params.provider}`;
   console.log(`[${params.provider} Route] params `, params);
+   // Log thông tin cơ bản của request
+  console.log(`[${params.provider} Route] Request Info:`, {
+    method: req.method,
+    url: req.url,
+    headers: Array.from(req.headers.entries()),
+  });
+  
+  // Nếu muốn log thêm body của request (chỉ nên làm điều này khi debug)
+  if (req.method !== "GET") {
+    try {
+      // Clone req vì body chỉ có thể đọc 1 lần
+      const reqClone = req.clone();
+      const body = await reqClone.text(); // hoặc await reqClone.json() nếu bạn chắc body là JSON
+      console.log(`[${params.provider} Route] Request Body:`, body);
+    } catch (error) {
+      console.error(`[${params.provider} Route] Error reading request body:`, error);
+    }
+  }
   switch (apiPath) {
     case ApiPath.Azure:
       return azureHandler(req, { params });
